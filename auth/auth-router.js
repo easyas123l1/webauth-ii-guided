@@ -20,11 +20,11 @@ router.post("/register", (req, res) => {
 
 router.post("/login", (req, res) => {
   let { username, password } = req.body;
-
   Users.findBy({ username })
     .first()
     .then(user => {
       if (user && bcrypt.compareSync(password, user.password)) {
+        // save a session for the client and send back a cookie
         req.session.user = user;
         res.status(200).json({
           message: `Welcome ${user.username}!`
@@ -36,6 +36,10 @@ router.post("/login", (req, res) => {
     .catch(error => {
       res.status(500).json(error);
     });
+});
+
+router.get("/logout", (req, res) => {
+  req.session.destroy();
 });
 
 module.exports = router;
